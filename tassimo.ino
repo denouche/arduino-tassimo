@@ -27,25 +27,41 @@ const int GPIO_PIN_2 = 5;
 
 byte mac[6];
 
+void open() {
+    digitalWrite(GPIO_PIN_1, LOW);
+    delay(300);
+    digitalWrite(GPIO_PIN_1, HIGH);
+}
+
 void handleOpen() {
     if(!server.authenticate(www_username, www_password)) {
         return server.requestAuthentication();
     }
-
-    digitalWrite(GPIO_PIN_1, LOW);
-    delay(300);
-    digitalWrite(GPIO_PIN_1, HIGH);
+    open();
     server.send(204);
+}
+
+void press() {
+    digitalWrite(GPIO_PIN_2, HIGH);
+    delay(300);
+    digitalWrite(GPIO_PIN_2, LOW);
 }
 
 void handlePress() {
     if(!server.authenticate(www_username, www_password)) {
         return server.requestAuthentication();
     }
+    press();
+    server.send(204);
+}
 
-    digitalWrite(GPIO_PIN_2, HIGH);
+void handleCoffee() {
+    if(!server.authenticate(www_username, www_password)) {
+        return server.requestAuthentication();
+    }
+    open();
     delay(300);
-    digitalWrite(GPIO_PIN_2, LOW);
+    press();
     server.send(204);
 }
 
@@ -114,20 +130,13 @@ void informConnexionDone() {
     String jsonString = getInformations();
 
     HTTPClient http;
-    Serial.println("Fingerprint");
-    Serial.println(API_HTTPS_FINGERPRINT);
     http.begin(API_BASE_URL + "/devices/register", API_HTTPS_FINGERPRINT);
     http.addHeader("Authorization", API_AUTHORIZATION);
     http.addHeader("Content-Type", "application/json");
 
     int httpCode = http.POST(jsonString);
-
-    Serial.println("httpCode");
-    Serial.println(String(httpCode));
-
     http.end();
 }
-
 
 void setup ( void ) {
     Serial.begin(115200);
@@ -160,10 +169,14 @@ void setup ( void ) {
 
     server.on("/open", handleOpen);
     server.on("/press", handlePress);
+    server.on("/coffee", handleCoffee);
+
     server.on("/info", handleInfo);
     server.on("/status", handleInfo);
+
     server.on("/update", handleUpdate);
     server.on("/disconnect", handleDisconnect);
+
     server.onNotFound(handleNotFound);
 
     server.begin();
