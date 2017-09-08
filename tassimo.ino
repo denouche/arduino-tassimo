@@ -17,8 +17,8 @@ const char* www_username = "denouche";
 const char* www_password = "denouche";
 
 // Put here the fingerprint of above domain name HTTPS certificate
-// iot.leveugle.net TLS SHA-1 fingerprint, expire on 2017-10-04
-String API_HTTPS_FINGERPRINT = "BB 13 89 F4 B0 82 3F 1D 90 CE 92 FD E6 98 9C 14 94 C3 6A CA";
+// iot.leveugle.net TLS SHA-1 fingerprint, issued on 2017-09-05
+String API_HTTPS_FINGERPRINT = "B9 8C A0 87 A8 94 C0 11 C6 45 53 30 8D F8 44 48 DA 60 08 C5";
 
 ESP8266WebServer server(80);
 
