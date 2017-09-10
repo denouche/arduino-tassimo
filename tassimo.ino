@@ -82,7 +82,7 @@ void handleInfo() {
 
 void update() {
     String macString = String(mac[0], HEX) + ":" + String(mac[1], HEX) + ":" + String(mac[2], HEX) + ":" + String(mac[3], HEX) + ":" + String(mac[4], HEX) + ":" + String(mac[5], HEX);
-    t_httpUpdate_return ret = ESPhttpUpdate.update("iot.leveugle.net", 80, "/api/download?mac=" + macString);
+    t_httpUpdate_return ret = ESPhttpUpdate.update(API_HOSTNAME, 80, API_BASE_URL + "/download?mac=" + macString);
     Serial.println(ret);
     switch(ret) {
         case HTTP_UPDATE_FAILED:
@@ -110,7 +110,7 @@ void handleDisconnect() {
 }
 
 String getInformations() {
-    const size_t bufferSize = JSON_OBJECT_SIZE(5) + 200;
+    const size_t bufferSize = JSON_OBJECT_SIZE(6) + 250;
     DynamicJsonBuffer jsonBuffer(bufferSize);
     JsonObject& root = jsonBuffer.createObject();
 
@@ -130,7 +130,7 @@ void informConnexionDone() {
     String jsonString = getInformations();
 
     HTTPClient http;
-    http.begin(API_BASE_URL + "/devices/register", API_HTTPS_FINGERPRINT);
+    http.begin(API_PROTOCOL + API_HOSTNAME + API_BASE_URL + "/devices/register", API_HTTPS_FINGERPRINT);
     http.addHeader("Authorization", API_AUTHORIZATION);
     http.addHeader("Content-Type", "application/json");
 
