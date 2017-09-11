@@ -24,8 +24,33 @@ ESP8266WebServer server(80);
 
 const int GPIO_PIN_1 = 4;
 const int GPIO_PIN_2 = 5;
+const int GPIO_PIN_RELAY = 12;
 
 byte mac[6];
+
+void on() {
+  digitalWrite(GPIO_PIN_RELAY, HIGH);
+}
+
+void handleOn() {
+    if(!server.authenticate(www_username, www_password)) {
+        return server.requestAuthentication();
+    }
+    on();
+    server.send(204);
+}
+
+void off() {
+  digitalWrite(GPIO_PIN_RELAY, LOW);
+}
+
+void handleOff() {
+    if(!server.authenticate(www_username, www_password)) {
+        return server.requestAuthentication();
+    }
+    off();
+    server.send(204);
+}
 
 void open() {
     digitalWrite(GPIO_PIN_1, LOW);
@@ -59,10 +84,14 @@ void handleCoffee() {
     if(!server.authenticate(www_username, www_password)) {
         return server.requestAuthentication();
     }
+    server.send(204);
+    on();
+    delay(300);
     open();
     delay(300);
     press();
-    server.send(204);
+    delay(120000);
+    off();
 }
 
 void handleNotFound() {
@@ -148,6 +177,9 @@ void setup ( void ) {
     pinMode(GPIO_PIN_2, OUTPUT);
     digitalWrite(GPIO_PIN_2, LOW);  // by default, the start switch is in parallel with this optocouper, so transistor should be OFF by default. Pull-down resistor.
 
+    pinMode(GPIO_PIN_RELAY, OUTPUT);
+    digitalWrite(GPIO_PIN_RELAY, LOW); // by default, the start switch is in parallel with the relay, so transistor should be OFF by default. Pull-down resistor.
+
     WiFiManager wifiManager;
     wifiManager.autoConnect("AutoConnectAP");
 
@@ -167,9 +199,12 @@ void setup ( void ) {
     update();
     info();
 
+    server.on("/on", handleOn);
+    server.on("/off", handleOff);
     server.on("/open", handleOpen);
     server.on("/press", handlePress);
-    server.on("/coffee", handleCoffee);
+    
+    server.on("/coffee", handleCoffee); // global command
 
     server.on("/info", handleInfo);
     server.on("/status", handleInfo);
