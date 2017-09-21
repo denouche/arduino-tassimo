@@ -203,7 +203,7 @@ void setup ( void ) {
     server.on("/off", handleOff);
     server.on("/open", handleOpen);
     server.on("/press", handlePress);
-    
+
     server.on("/coffee", handleCoffee); // global command
 
     server.on("/info", handleInfo);
