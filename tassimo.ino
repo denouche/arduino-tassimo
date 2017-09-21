@@ -196,7 +196,7 @@ void setup ( void ) {
 
     info();
     informConnexionDone();
-    //update();
+    update();
     info();
 
     server.on("/on", handleOn);
