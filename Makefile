@@ -17,5 +17,7 @@ updateVersion:
 
 build: updateVersion
 	arduino --board esp8266:esp8266:generic:CpuFrequency=80,UploadSpeed=115200,FlashFreq=40,FlashSize=4M3M --pref build.path=$$PWD/$(DIST_FOLDER) --verify $(SRC_FILE)
+	ls -al $$PWD/$(DIST_FOLDER)
+	cat $$PWD/$(DIST_FOLDER)/build.options.json
 
 
