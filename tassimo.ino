@@ -11,7 +11,7 @@
 #include "Credentials.h"
 
 const char* software_name = "tassimo";
-const char* software_version = "1.1.1";
+const char* software_version = "1.1.3";
 
 const char* www_username = "denouche";
 const char* www_password = "denouche";
