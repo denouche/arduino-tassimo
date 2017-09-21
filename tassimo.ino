@@ -11,7 +11,7 @@
 #include "Credentials.h"
 
 const char* software_name = "tassimo";
-const char* software_version = "1.1.0";
+const char* software_version = "1.0.2";
 
 const char* www_username = "denouche";
 const char* www_password = "denouche";
@@ -22,14 +22,14 @@ String API_HTTPS_FINGERPRINT = "B9 8C A0 87 A8 94 C0 11 C6 45 53 30 8D F8 44 48 
 
 ESP8266WebServer server(80);
 
-const int GPIO_PIN_1 = 4;
-const int GPIO_PIN_2 = 5;
-const int GPIO_PIN_RELAY = 12;
+const int GPIO_PIN_4 = 4;
+const int GPIO_PIN_5 = 5;
+const int GPIO_PIN_12_RELAY = 12;
 
 byte mac[6];
 
 void on() {
-  digitalWrite(GPIO_PIN_RELAY, HIGH);
+  digitalWrite(GPIO_PIN_12_RELAY, HIGH);
 }
 
 void handleOn() {
@@ -41,7 +41,7 @@ void handleOn() {
 }
 
 void off() {
-  digitalWrite(GPIO_PIN_RELAY, LOW);
+  digitalWrite(GPIO_PIN_12_RELAY, LOW);
 }
 
 void handleOff() {
@@ -53,9 +53,9 @@ void handleOff() {
 }
 
 void open() {
-    digitalWrite(GPIO_PIN_1, LOW);
+    digitalWrite(GPIO_PIN_4, LOW);
     delay(300);
-    digitalWrite(GPIO_PIN_1, HIGH);
+    digitalWrite(GPIO_PIN_4, HIGH);
 }
 
 void handleOpen() {
@@ -67,9 +67,9 @@ void handleOpen() {
 }
 
 void press() {
-    digitalWrite(GPIO_PIN_2, HIGH);
+    digitalWrite(GPIO_PIN_5, HIGH);
     delay(300);
-    digitalWrite(GPIO_PIN_2, LOW);
+    digitalWrite(GPIO_PIN_5, LOW);
 }
 
 void handlePress() {
@@ -86,9 +86,9 @@ void handleCoffee() {
     }
     server.send(204);
     on();
-    delay(300);
+    delay(1000);
     open();
-    delay(300);
+    delay(1000);
     press();
     delay(120000);
     off();
@@ -171,14 +171,14 @@ void setup ( void ) {
     Serial.begin(115200);
     Serial.println("setup - begin");
 
-    pinMode(GPIO_PIN_1, OUTPUT);
-    digitalWrite(GPIO_PIN_1, HIGH); // by default, the open/close switch is in serial with the optocouper, so transistor should be ON by default. Pull-up resistor.
+    pinMode(GPIO_PIN_4, OUTPUT);
+    digitalWrite(GPIO_PIN_4, HIGH); // by default, the open/close switch is in serial with the optocouper, so transistor should be ON by default. Pull-up resistor.
 
-    pinMode(GPIO_PIN_2, OUTPUT);
-    digitalWrite(GPIO_PIN_2, LOW);  // by default, the start switch is in parallel with this optocouper, so transistor should be OFF by default. Pull-down resistor.
+    pinMode(GPIO_PIN_5, OUTPUT);
+    digitalWrite(GPIO_PIN_5, LOW);  // by default, the start switch is in parallel with this optocouper, so transistor should be OFF by default. Pull-down resistor.
 
-    pinMode(GPIO_PIN_RELAY, OUTPUT);
-    digitalWrite(GPIO_PIN_RELAY, LOW); // by default, the start switch is in parallel with the relay, so transistor should be OFF by default. Pull-down resistor.
+    pinMode(GPIO_PIN_12_RELAY, OUTPUT);
+    digitalWrite(GPIO_PIN_12_RELAY, LOW); // by default, the start switch is in parallel with the relay, so transistor should be OFF by default. Pull-down resistor.
 
     WiFiManager wifiManager;
     wifiManager.autoConnect("AutoConnectAP");
