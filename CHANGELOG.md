@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.6"></a>
+## [1.1.6](https://github.com/denouche/arduino-tassimo/compare/v1.1.5...v1.1.6) (2017-09-21)
+
+
+### Bug Fixes
+
+* auto update at boot ([fa4431f](https://github.com/denouche/arduino-tassimo/commit/fa4431f))
+
+
+
 <a name="1.1.5"></a>
 ## [1.1.5](https://github.com/denouche/arduino-tassimo/compare/v1.1.4...v1.1.5) (2017-09-21)
 
