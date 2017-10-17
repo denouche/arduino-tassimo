@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+<a name="1.1.7"></a>
+## [1.1.7](https://github.com/denouche/arduino-tassimo/compare/v1.1.6...v1.1.7) (2017-10-17)
+
+
+### Bug Fixes
+
+* add a lock to avoid to be able to launch 2 coffee at the same time ([0710075](https://github.com/denouche/arduino-tassimo/commit/0710075)), closes [#1](https://github.com/denouche/arduino-tassimo/issues/1)
+
+
+
 <a name="1.1.6"></a>
 ## [1.1.6](https://github.com/denouche/arduino-tassimo/compare/v1.1.5...v1.1.6) (2017-09-21)
 
