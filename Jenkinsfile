@@ -2,7 +2,7 @@
 
 node {
 
-    projectName = "esp8266-tassimo"
+    projectName = "tassimo"
 
     def sanitizedBuildTag = sh script: "echo -n '${env.BUILD_TAG}' | sed -r 's/[^a-zA-Z0-9_.-]//g' | tr '[:upper:]' '[:lower:]'", returnStdout: true
 

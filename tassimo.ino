@@ -27,6 +27,7 @@ const int GPIO_PIN_5 = 5;
 const int GPIO_PIN_12_RELAY = 12;
 
 byte mac[6];
+boolean locked = false;
 
 void on() {
   digitalWrite(GPIO_PIN_12_RELAY, HIGH);
@@ -84,14 +85,22 @@ void handleCoffee() {
     if(!server.authenticate(www_username, www_password)) {
         return server.requestAuthentication();
     }
-    server.send(204);
-    on();
-    delay(1000);
-    open();
-    delay(1000);
-    press();
-    delay(120000);
-    off();
+
+    if(locked) {
+      server.send(409);
+    }
+    else {
+      locked = true;
+      server.send(204);
+      on();
+      delay(1000);
+      open();
+      delay(1000);
+      press();
+      delay(120000);
+      off();
+      locked = false;
+    }
 }
 
 void handleNotFound() {
