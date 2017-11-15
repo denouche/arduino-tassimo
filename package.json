@@ -1,6 +1,6 @@
 {
   "name": "tassimo",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "",
   "devDependencies": {
     "standard-version": "^4.2.0"
