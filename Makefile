@@ -2,7 +2,7 @@ SHELL := /bin/bash
 
 DIST_FOLDER=dist
 VERSION=$(shell cat package.json | grep -Po '"version"\s*:\s*"\K([^"]+)')
-SRC_FILE=tassimo.ino
+SRC_FILE=tassimo/tassimo.ino
 
 help:
 	@echo "Existing goals are: "

@@ -2,19 +2,18 @@
 #include <ESP8266HTTPClient.h>
 #include <ESP8266httpUpdate.h>
 
-#include <WiFiClient.h> // Not needed if no need to get WiFi.localIP
 #include <DNSServer.h>           //needed for WiFiManager
 #include <ESP8266WebServer.h>    //needed for this program and for WiFiManager
 #include <WiFiManager.h>         //https://github.com/tzapu/WiFiManager
 #include <ArduinoJson.h>
 
+#include <CloudIoTCore.h>
+
 #include "Credentials.h"
+#include "iot-core.h"
 
 const char* software_name = "tassimo";
 const char* software_version = "1.1.9";
-
-const char* www_username = "denouche";
-const char* www_password = "denouche";
 
 // Put here the fingerprint of above domain name HTTPS certificate
 // iot.leveugle.net TLS SHA-1 fingerprint, issued on 2017-11-04
@@ -32,24 +31,8 @@ void on() {
   digitalWrite(GPIO_PIN_12_RELAY, HIGH);
 }
 
-void handleOn() {
-    if(!server.authenticate(www_username, www_password)) {
-        return server.requestAuthentication();
-    }
-    on();
-    server.send(204);
-}
-
 void off() {
   digitalWrite(GPIO_PIN_12_RELAY, LOW);
-}
-
-void handleOff() {
-    if(!server.authenticate(www_username, www_password)) {
-        return server.requestAuthentication();
-    }
-    off();
-    server.send(204);
 }
 
 void open() {
@@ -58,34 +41,13 @@ void open() {
     digitalWrite(GPIO_PIN_4, HIGH);
 }
 
-void handleOpen() {
-    if(!server.authenticate(www_username, www_password)) {
-        return server.requestAuthentication();
-    }
-    open();
-    server.send(204);
-}
-
 void press() {
     digitalWrite(GPIO_PIN_5, HIGH);
     delay(300);
     digitalWrite(GPIO_PIN_5, LOW);
 }
 
-void handlePress() {
-    if(!server.authenticate(www_username, www_password)) {
-        return server.requestAuthentication();
-    }
-    press();
-    server.send(204);
-}
-
 void handleCoffee() {
-    if(!server.authenticate(www_username, www_password)) {
-        return server.requestAuthentication();
-    }
-
-    server.send(204);
     on();
     delay(1000);
     open();
@@ -95,19 +57,10 @@ void handleCoffee() {
     off();
 }
 
-void handleNotFound() {
-	  server.send(404);
-}
-
 String info() {
     String jsonString = getInformations();
     Serial.println(jsonString);
     return jsonString;
-}
-
-void handleInfo() {
-    String jsonString = info();
-    server.send(200, "application/json", jsonString);
 }
 
 void update() {
@@ -126,17 +79,6 @@ void update() {
             Serial.println("HTTP_UPDATE_OK");
             break;
     }
-}
-
-void handleUpdate() {
-    update();
-    server.send(204);
-}
-
-void handleDisconnect() {
-    server.send(204);
-    delay(200);
-    WiFi.disconnect();
 }
 
 String getInformations() {
@@ -195,31 +137,47 @@ void setup ( void ) {
 
     Serial.println("\nConnected!\n");
 
+    setupCloudIoT();
+
+    Serial.println("\n Connected to MQTT !\n");
+
     info();
     informConnexionDone();
     update();
     info();
 
-    server.on("/on", handleOn);
-    server.on("/off", handleOff);
-    server.on("/open", handleOpen);
-    server.on("/press", handlePress);
-
-    server.on("/coffee", handleCoffee); // global command
-
-    server.on("/info", handleInfo);
-    server.on("/status", handleInfo);
-
-    server.on("/update", handleUpdate);
-    server.on("/disconnect", handleDisconnect);
-
-    server.onNotFound(handleNotFound);
-
-    server.begin();
-    Serial.println("HTTP server started");
 }
+
+void handleConfig(String payload) {
+    Serial.println("New config received : "+payload);
+}
+
+void handleCommand(String payload) {
+    if(payload == "on") {
+        on();
+    } else if(payload =="off") {
+        off();
+    } else if(payload == "coffee") {
+        handleCoffee();
+    } else if(payload == "open") {
+        open();
+    } else if(payload == "press") {
+        press();
+    }
+}
+
+unsigned long lastMillis = 0;
 
 void loop() {
-    server.handleClient();
+    mqttClient->loop();
+    delay(10);  // <- fixes some issues with WiFi stability
+    if (!mqttClient->connected()) {
+        connect();
+    }
+    if (millis() - lastMillis > 180000) {
+        lastMillis = millis();
+        publishTelemetry(info());
+    }
 }
 
+ 
